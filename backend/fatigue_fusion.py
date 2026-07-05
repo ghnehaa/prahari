@@ -114,6 +114,14 @@ def fuse_fatigue(inputs: SensorInputs, baseline: OperatorBaseline = None) -> Fat
             "upper": round(upper_bound, 3)
         })
 
+    return FatigueOutput(
+        risk=_clamp(risk),
+        confidence=_clamp(confidence),
+        time_to_lapse_sec=time_to_lapse,
+        shap_factors=shap[:5],
+        forecast=forecast_points,
+    )
+
 
 class FatigueScenario:
     """Time-varying simulated operator state for demo scenarios."""
