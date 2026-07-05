@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PRAHARI · The Sentinel — Premium Edge HMI</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <!-- Chart.js CDN for high-performance offline risk curve forecasting -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">प्र</div>
+        <div>
+          <h1>PRAHARI <span class="muted">· THE SENTINEL</span></h1>
+          <p class="tagline">Offline Edge-AI Guardian · InnoVent-27 Heavy-Machinery Safety System</p>
+        </div>
+      </div>
+      <div class="status-pills">
+        <button id="voice-toggle-btn" class="pill pill-interactive pill-active">🔊 Voice Alerts: ON</button>
+        <span id="offline-pill" class="pill pill-offline">● OFFLINE — ON-DEVICE</span>
+        <span id="latency-pill" class="pill">Latency: <strong id="latency-ms">—</strong> ms</span>
+        <span id="fps-pill" class="pill">Updates: <strong id="fps-val">—</strong> Hz</span>
+      </div>
+    </header>
+
+    <section class="demo-bar">
+      <div class="demo-title-group">
+        <span class="demo-label">Edge-AI Demonstration Scenarios:</span>
+      </div>
+      <div class="demo-btn-group">
+        <button class="demo-btn" data-demo="head_nod">① Operator Fatigue (Head-Nod)</button>
+        <button class="demo-btn" data-demo="mannequin">② Crew Intrusion (Swing Zone)</button>
+        <button class="demo-btn" data-demo="offline">③ Loss of Network (100% Edge)</button>
+        <button id="calibrate-trigger-btn" class="demo-btn calibration-btn">⚡ Start Shift Calibration</button>
+        <button class="demo-btn secondary" data-demo="reset">Reset System</button>
+      </div>
+    </section>
+
+    <main class="grid">
+      <section class="panel predict glass">
+        <div class="panel-head">
+          <span class="badge badge-predict">PREDICT</span>
+          <h2>Operator Incapacitation Forecast</h2>
+        </div>
+        
+        <div class="countdown-block" id="countdown-block">
+          <div class="countdown-value" id="countdown-value">—</div>
+          <div class="countdown-label">Predicted Incapacitation Lapse</div>
+        </div>
+
+        <div class="metrics-row">
+          <div class="metric">
+            <div class="metric-label-row">
+              <label>Fatigue Risk Index</label>
+              <span id="risk-val">0%</span>
+            </div>
+            <div class="bar-wrap"><div class="bar bar-risk" id="risk-bar"></div></div>
+          </div>
+          <div class="metric">
+            <div class="metric-label-row">
+              <label>Conformal Confidence</label>
+              <span id="conf-val">0%</span>
+            </div>
+            <div class="bar-wrap"><div class="bar bar-conf" id="conf-bar"></div></div>
+          </div>
+        </div>
+
+        <div class="forecast-box">
+          <h3>12-Min Conformal Risk Prediction Interval</h3>
+          <div class="chart-container">
+            <canvas id="forecast-chart"></canvas>
+          </div>
+        </div>
+
+        <div class="shap-box">
+          <h3>SHAP Physiological Explainability</h3>
+          <ul id="shap-list"></ul>
+        </div>
+      </section>
+
+      <section class="panel protect glass">
+        <div class="panel-head">
+          <span class="badge badge-protect">PROTECT</span>
+          <h2>Proximity Safety Radar (Blind-Zone)</h2>
+        </div>
+        <div class="radar-box">
+          <canvas id="zone-canvas" width="440" height="320"></canvas>
+          <div class="camera-status-overlay">
+            <div class="cam-feed active"><span class="pulse-red">●</span> CAM 1: REAR SWING</div>
+            <div class="cam-feed active"><span class="pulse-red">●</span> CAM 2: CAB BLINDSPOT</div>
+          </div>
+        </div>
+        <p class="canvas-hint">Click/Drag the worker (orange beacon) to test Warning (yellow) and Danger (red) zones.</p>
+        <div class="zone-stats-row">
+          <div class="z-stat">
+            <label>Workers in Danger</label>
+            <span id="workers-count">0</span>
+          </div>
+          <div class="z-stat">
+            <label>Detection confidence</label>
+            <span id="zone-conf">0%</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel adapt glass">
+        <div class="panel-head">
+          <span class="badge badge-adapt">ADAPT</span>
+          <h2>Adaptive Control & Graded Response</h2>
+        </div>
+        <div class="escalation-ladder" id="escalation-ladder">
+          <div class="step" data-level="0">
+            <span class="step-num">1</span>
+            <span class="step-lbl">Normal</span>
+          </div>
+          <div class="step" data-level="1">
+            <span class="step-num">2</span>
+            <span class="step-lbl">Nudge</span>
+          </div>
+          <div class="step" data-level="2">
+            <span class="step-num">3</span>
+            <span class="step-lbl">Micro-Break</span>
+          </div>
+          <div class="step" data-level="3">
+            <span class="step-num">4</span>
+            <span class="step-lbl">Throttle Limit</span>
+          </div>
+          <div class="step" data-level="4">
+            <span class="step-num">5</span>
+            <span class="step-lbl">Controlled Stop</span>
+          </div>
+        </div>
+        
+        <div class="throttle-gauge">
+          <div class="gauge-header">
+            <label>CAN-Bus Machine Actuation Throttle</label>
+            <span id="throttle-val">100%</span>
+          </div>
+          <div class="gauge-track">
+            <div class="gauge-fill" id="throttle-fill"></div>
+          </div>
+        </div>
+
+        <div class="telemetry-box">
+          <h3>CAN-Bus Machine Telemetry Data</h3>
+          <div class="telemetry-grid">
+            <div class="tel-card">
+              <span class="tel-label">SPEED</span>
+              <span class="tel-number" id="tel-speed">-- km/h</span>
+            </div>
+            <div class="tel-card">
+              <span class="tel-label">ENGINE RPM</span>
+              <span class="tel-number" id="tel-rpm">-- RPM</span>
+            </div>
+            <div class="tel-card">
+              <span class="tel-label">BRAKE PSI</span>
+              <span class="tel-number" id="tel-brakes">-- PSI</span>
+            </div>
+            <div class="tel-card">
+              <span class="tel-label">HYDRAULIC</span>
+              <span class="tel-number" id="tel-hydraulic">-- PSI</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="alerts-box">
+          <h3>Real-time Alerts Log</h3>
+          <ul id="alerts-list"><li class="muted-li">No active alerts</li></ul>
+        </div>
+      </section>
+
+      <section class="panel sync glass">
+        <div class="panel-head">
+          <span class="badge badge-edge">OFFLINE CACHE</span>
+          <h2>Shift Event Log & Sync Manager</h2>
+        </div>
+        
+        <div class="sync-controls">
+          <div class="cloud-status">
+            <span>Link Status:</span>
+            <button id="cloud-toggle-btn" class="cloud-btn online">ONLINE (SYNC READY)</button>
+          </div>
+          <button id="sync-now-btn" class="demo-btn secondary">Force Bulk Sync</button>
+        </div>
+
+        <div class="log-table-wrap">
+          <table class="log-table">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Safety Event Description</th>
+                <th>Severity</th>
+                <th>Local status</th>
+              </tr>
+            </thead>
+            <tbody id="log-table-body">
+              <tr>
+                <td colspan="4" class="muted text-center">No telemetry logs recorded in this session.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <strong>Team PRAHARI · Jaypee Institute of Information Technology (JIIT)</strong><br />
+      Offline Edge-AI Operator Incapacitation & Blind-Zone Safety System · InnoVent-27 Demo
+    </footer>
+  </div>
+
+  <!-- Calibration Modal Overlay -->
+  <div id="calibration-overlay" class="overlay hidden">
+    <div class="overlay-card glass">
+      <h2>Biometric Baseline Calibration</h2>
+      <p>Analyzing operator resting physiological baselines (blink rate, HRV, body temperature) to conformally calibrate fatigue prediction boundaries...</p>
+      
+      <div class="calibration-countdown-circle">
+        <span id="cal-countdown">5</span>
+      </div>
+
+      <div class="calibration-bar-wrap">
+        <div class="calibration-bar-fill" id="cal-bar-fill"></div>
+      </div>
+
+      <div class="calibration-live-metrics">
+        <div class="cal-metric-box">
+          <span class="lbl">HEART RATE</span>
+          <span class="val" id="cal-hr">-- bpm</span>
+        </div>
+        <div class="cal-metric-box">
+          <span class="lbl">BLINK RATE</span>
+          <span class="val" id="cal-blink">-- bpm</span>
+        </div>
+        <div class="cal-metric-box">
+          <span class="lbl">SKIN TEMP</span>
+          <span class="val" id="cal-temp">-- °C</span>
+        </div>
+      </div>
+      <p class="calibration-hint">Please look directly at the cabin sensor and remain still...</p>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
